@@ -40,4 +40,8 @@ class PetStore {
     public function addPet(array $petData): array {
         return $this->request('post', '/pet', $petData);
     }
+
+    public function getPet(int $id): array {
+        return $this->request('get', "/pet/{$id}");
+    }
 }
