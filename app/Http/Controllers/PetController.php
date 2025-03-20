@@ -18,7 +18,12 @@ class PetController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $pets = $this->petStore->findByStatus();
+            return view('pets.index', ['pets' => $pets]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage());
+        }
     }
 
     /**
