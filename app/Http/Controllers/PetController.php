@@ -131,6 +131,11 @@ class PetController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $this->petStore->deletePet($id);
+            return redirect()->route('pets.index')->with('success', 'Zwierzę zostało usunięte pomyślnie');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage());
+        }
     }
 }
