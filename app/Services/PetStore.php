@@ -44,4 +44,8 @@ class PetStore {
     public function getPet(int $id): array {
         return $this->request('get', "/pet/{$id}");
     }
+
+    public function editPet(int $id): array {
+        return $this->request('get', "/pet/{$id}");
+    }
 }

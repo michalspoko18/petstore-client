@@ -84,7 +84,12 @@ class PetController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $pet = $this->petStore->editPet($id);
+            return view('pets.edit', ['pet' => $pet]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Nie udało się znaleźć zwierzęcia: ' . $e->getMessage());
+        }
     }
 
     /**
