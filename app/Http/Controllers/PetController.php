@@ -85,7 +85,7 @@ class PetController extends Controller
     public function edit(string $id)
     {
         try {
-            $pet = $this->petStore->editPet($id);
+            $pet = $this->petStore->getPet($id);
             return view('pets.edit', ['pet' => $pet]);
         } catch (\Exception $e) {
             return back()->with('error', 'Nie udało się znaleźć zwierzęcia: ' . $e->getMessage());
@@ -97,7 +97,33 @@ class PetController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'status' => 'required|in:available,pending,sold',
+                'category_name' => 'nullable|string',
+                'photo_url' => 'nullable|url',
+            ]);
+            
+            $petData = [
+                'id' => (int)$id,
+                'name' => $validated['name'],
+                'status' => $validated['status'],
+                'category' => [
+                    'id' => 0,
+                    'name' => $validated['category_name'] ?? 'default'
+                ],
+                'photoUrls' => [$validated['photo_url'] ?? ''],
+                'tags' => []
+            ];
+            
+            $this->petStore->updatePet($petData);
+            
+            return redirect()->route('pets.index')->with('success', 'Zwierzę zostało zaktualizowane pomyślnie');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage())->withInput();
+        }
+    
     }
 
     /**
