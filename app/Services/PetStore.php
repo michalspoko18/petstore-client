@@ -36,4 +36,8 @@ class PetStore {
             'status' => $status
         ]);
     }
+
+    public function addPet(array $petData): array {
+        return $this->request('post', '/pet', $petData);
+    }
 }
