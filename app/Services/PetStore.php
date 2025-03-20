@@ -31,4 +31,9 @@ class PetStore {
         return $response->json();
     } 
 
+    public function findByStatus(string $status = 'available'): array {
+        return $this->request('get', '/pet/findByStatus', [
+            'status' => $status
+        ]);
+    }
 }
