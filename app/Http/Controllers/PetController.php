@@ -31,7 +31,7 @@ class PetController extends Controller
      */
     public function create()
     {
-        //
+        return view('pets.create');
     }
 
     /**
@@ -39,7 +39,31 @@ class PetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'status' => 'required|in:available,pending,sold',
+                'category_name' => 'nullable|string',
+                'photo_url' => 'nullable|url',
+            ]);
+            
+            $petData = [
+                'name' => $validated['name'],
+                'status' => $validated['status'],
+                'category' => [
+                    'id' => 0,
+                    'name' => $validated['category_name'] ?? 'default'
+                ],
+                'photoUrls' => [$validated['photo_url'] ?? ''],
+                'tags' => []
+            ];
+            
+            $this->petStore->addPet($petData);
+            
+            return redirect()->route('pets.index')->with('success', 'Zwierzę zostało dodane pomyślnie');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage())->withInput();
+        }
     }
 
     /**
