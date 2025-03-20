@@ -32,9 +32,7 @@ class PetStore {
     } 
 
     public function findByStatus(string $status = 'available'): array {
-        return $this->request('get', '/pet/findByStatus', [
-            'status' => $status
-        ]);
+        return $this->request('get', '/pet/findByStatus', ['status' => $status]);
     }
 
     public function addPet(array $petData): array {
@@ -51,5 +49,9 @@ class PetStore {
 
     public function updatePet(array $petData): array {
         return $this->request('put', '/pet', $petData);
+    }
+
+    public function deletePet(int $id): array {
+        return $this->request('delete', "/pet/{$id}");
     }
 }
