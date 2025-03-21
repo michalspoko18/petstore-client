@@ -9,6 +9,13 @@ class PetController extends Controller
 {
     protected PetStore $petStore;
 
+    private array $validationRules = [
+        'name' => 'required|string|max:255',
+        'status' => 'required|in:available,pending,sold',
+        'category_name' => 'nullable|string',
+        'photo_url' => 'nullable|url',
+    ];
+
     public function __construct(PetStore $petStore) {
         $this->petStore = $petStore;
     }
@@ -50,23 +57,9 @@ class PetController extends Controller
     public function store(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'status' => 'required|in:available,pending,sold',
-                'category_name' => 'nullable|string',
-                'photo_url' => 'nullable|url',
-            ]);
+            $validated = $request->validate($this->validationRules);
             
-            $petData = [
-                'name' => $validated['name'],
-                'status' => $validated['status'],
-                'category' => [
-                    'id' => 0,
-                    'name' => $validated['category_name'] ?? 'default'
-                ],
-                'photoUrls' => [$validated['photo_url'] ?? ''],
-                'tags' => []
-            ];
+            $petData = $this->preparePetData($validated);
             
             $this->petStore->addPet($petData);
             
@@ -108,24 +101,9 @@ class PetController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $validated = $request->validate([
-                'name' => 'required|string|max:255',
-                'status' => 'required|in:available,pending,sold',
-                'category_name' => 'nullable|string',
-                'photo_url' => 'nullable|url',
-            ]);
+            $validated = $request->validate($this->validationRules);
             
-            $petData = [
-                'id' => (int)$id,
-                'name' => $validated['name'],
-                'status' => $validated['status'],
-                'category' => [
-                    'id' => 0,
-                    'name' => $validated['category_name'] ?? 'default'
-                ],
-                'photoUrls' => [$validated['photo_url'] ?? ''],
-                'tags' => []
-            ];
+            $petData = $this->preparePetData($validated, $id);
             
             $this->petStore->updatePet($petData);
             
@@ -147,5 +125,20 @@ class PetController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage());
         }
+    }
+
+    private function preparePetData(array $validated, ?string $id = null): array
+    {
+        return [
+            'id' => $id ? (int)$id : null,
+            'name' => $validated['name'],
+            'status' => $validated['status'],
+            'category' => [
+                'id' => 0,
+                'name' => $validated['category_name'] ?? 'default'
+            ],
+            'photoUrls' => [$validated['photo_url'] ?? ''],
+            'tags' => []
+        ];
     }
 }
