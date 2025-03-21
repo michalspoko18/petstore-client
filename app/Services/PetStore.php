@@ -43,10 +43,6 @@ class PetStore {
         return $this->request('get', "/pet/{$id}");
     }
 
-    public function editPet(int $id): array {
-        return $this->request('get', "/pet/{$id}");
-    }
-
     public function updatePet(array $petData): array {
         return $this->request('put', '/pet', $petData);
     }
