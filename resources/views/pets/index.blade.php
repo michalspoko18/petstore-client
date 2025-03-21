@@ -4,6 +4,24 @@
     <h1>Lista zwierząt</h1>
     <a href="{{ route('pets.create') }}" class="btn btn-primary mb-3">Dodaj nowe zwierzę</a>
 
+    <div class="mb-4">
+        <h4>Filtruj według statusu:</h4>
+        <div class="btn-group">
+            <a href="{{ route('pets.index', ['status' => 'available']) }}" 
+               class="btn {{ $currentStatus == 'available' ? 'btn-primary' : 'btn-outline-primary' }}">
+                Dostępne
+            </a>
+            <a href="{{ route('pets.index', ['status' => 'pending']) }}" 
+               class="btn {{ $currentStatus == 'pending' ? 'btn-primary' : 'btn-outline-primary' }}">
+                Oczekujące
+            </a>
+            <a href="{{ route('pets.index', ['status' => 'sold']) }}" 
+               class="btn {{ $currentStatus == 'sold' ? 'btn-primary' : 'btn-outline-primary' }}">
+                Sprzedane
+            </a>
+        </div>
+    </div>
+
     <div class="row">
         @forelse($pets as $pet)
             <div class="col-md-6 col-xl-3 mb-4">
@@ -34,7 +52,7 @@
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-info">Brak zwierząt do wyświetlenia</div>
+                <div class="alert alert-info">Brak zwierząt o statusie "{{ $currentStatus }}" do wyświetlenia</div>
             </div>
         @endforelse
     </div>

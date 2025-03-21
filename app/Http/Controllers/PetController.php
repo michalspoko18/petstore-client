@@ -16,16 +16,26 @@ class PetController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $pets = $this->petStore->findByStatus();
-            return view('pets.index', ['pets' => $pets]);
+            $status = $request->query('status', 'available'); // Domyślnie 'available' jeśli nie podano
+            
+            // Walidacja statusu
+            if (!in_array($status, ['available', 'pending', 'sold'])) {
+                $status = 'available'; // Fallback do domyślnej wartości jeśli nieprawidłowy status
+            }
+            
+            $pets = $this->petStore->findByStatus($status);
+            
+            return view('pets.index', [
+                'pets' => $pets,
+                'currentStatus' => $status
+            ]);
         } catch (\Exception $e) {
             return back()->with('error', 'Wystąpił błąd: ' . $e->getMessage());
         }
     }
-
     /**
      * Show the form for creating a new resource.
      */
